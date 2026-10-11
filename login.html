@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+Login - SmartWaste AI
+{% endblock %}
+
+
+{% block content %}
+
+<div class="auth-page">
+
+    <div class="auth-card">
+
+
+        <!-- LOGO -->
+
+        <div class="logo">
+
+            ♻ SmartWaste AI
+
+        </div>
+
+
+        <h1>
+            Welcome Back
+        </h1>
+
+
+        <p>
+            Login to your SmartWaste account.
+        </p>
+
+
+        <!-- LOGIN FORM -->
+
+        <form method="POST">
+
+
+            <label for="email">
+                Email Address
+            </label>
+
+            <input
+                type="email"
+                id="email"
+                name="email"
+                placeholder="Enter your email"
+                required
+            >
+
+
+            <label for="password">
+                Password
+            </label>
+
+            <input
+                type="password"
+                id="password"
+                name="password"
+                placeholder="Enter your password"
+                required
+            >
+
+
+            <button
+                type="submit"
+                class="btn primary full">
+
+                Login
+
+            </button>
+
+        </form>
+
+
+        <!-- REGISTER -->
+
+        <p class="auth-link">
+
+            Don't have an account?
+
+            <a href="{{ url_for('register') }}">
+
+                Create Account
+
+            </a>
+
+        </p>
+
+
+        <!-- DEMO ADMIN -->
+
+        <div class="demo-box">
+
+            <strong>
+                Demo Admin Login
+            </strong>
+
+            <br><br>
+
+            Email:
+            admin@smartwaste.com
+
+            <br>
+
+            Password:
+            admin123
+
+        </div>
+
+
+    </div>
+
+</div>
+
+{% endblock %}

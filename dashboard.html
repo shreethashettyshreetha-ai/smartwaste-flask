@@ -1,0 +1,931 @@
+{% extends "base.html" %}
+
+{% block title %}SmartWaste Dashboard{% endblock %}
+
+{% block content %}
+
+<div class="app-layout">
+
+    <!-- ================= SIDEBAR ================= -->
+
+    <aside class="sidebar">
+
+        <div class="sidebar-brand">
+
+            <div class="brand-symbol">♻</div>
+
+            <div class="sidebar-logo">
+                SmartWaste
+            </div>
+
+            <div class="sidebar-subtitle">
+                AI Management
+            </div>
+
+        </div>
+
+
+        <nav class="sidebar-nav">
+
+            <a class="active" href="{{ url_for('dashboard') }}">
+                <span>🏠</span>
+                Dashboard
+            </a>
+
+            <a href="{{ url_for('camera') }}">
+                <span>📷</span>
+                AI Scanner
+            </a>
+
+            <a href="{{ url_for('history') }}">
+                <span>🕘</span>
+                History
+            </a>
+
+            <a href="{{ url_for('analytics') }}">
+                <span>📊</span>
+                Analytics
+            </a>
+
+            <a href="{{ url_for('recycling_centers') }}">
+                <span>📍</span>
+                Recycling Centers
+            </a>
+
+        </nav>
+
+
+        <!-- USER -->
+
+        <div class="sidebar-user">
+
+            <div class="user-avatar-large">
+                {{ session.get('name', 'U')[0]|upper }}
+            </div>
+
+            <strong>
+                {{ session.get('name', 'User') }}
+            </strong>
+
+            <span>
+                {{ session.get('email', '') }}
+            </span>
+
+            <a href="{{ url_for('logout') }}" class="logout-link">
+                🚪 Logout
+            </a>
+
+        </div>
+
+    </aside>
+
+
+    <!-- ================= MAIN ================= -->
+
+    <main class="main-content">
+
+        <!-- TOP BAR -->
+
+        <header class="topbar">
+
+            <div>
+
+                <h2>
+                    SmartWaste Dashboard
+                </h2>
+
+                <p>
+                    AI-powered waste classification and recycling guidance
+                </p>
+
+            </div>
+
+            <div class="topbar-user">
+
+                <span>
+                    Welcome,
+                </span>
+
+                <strong>
+                    {{ session.get('name', 'User') }}
+                </strong>
+
+            </div>
+
+        </header>
+
+
+        <!-- ================= PAGE ================= -->
+
+        <section class="dashboard-content">
+
+
+            <!-- ================= HERO ================= -->
+
+            <div class="dashboard-hero">
+
+                <div class="hero-content">
+
+                    <div class="hero-label">
+                        🤖 AI POWERED WASTE MANAGEMENT
+                    </div>
+
+                    <h1>
+                        Intelligent Waste Sorting
+                        <br>
+                        <span>
+                            for a Sustainable Planet
+                        </span>
+                    </h1>
+
+                    <p>
+                        Identify waste instantly using our AI-powered
+                        computer vision system and learn how to properly
+                        recycle or dispose of it.
+                    </p>
+
+                    <div class="hero-buttons">
+
+                        <a
+                            href="{{ url_for('camera') }}"
+                            class="hero-primary-btn">
+
+                            📷 Start AI Scanner
+
+                        </a>
+
+                        <a
+                            href="{{ url_for('history') }}"
+                            class="hero-secondary-btn">
+
+                            🕘 View History
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+
+                <div class="hero-illustration">
+
+                    <div class="hero-circle circle-one"></div>
+
+                    <div class="hero-circle circle-two"></div>
+
+                    <div class="hero-bin">
+
+                        <div class="bin-lid"></div>
+
+                        <div class="bin-body">
+                            ♻
+                        </div>
+
+                    </div>
+
+                    <div class="floating-card floating-card-one">
+                        🤖 AI
+                    </div>
+
+                    <div class="floating-card floating-card-two">
+                        ♻ Recycle
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================= STATISTICS ================= -->
+
+            <div class="dashboard-section-title">
+
+                <div>
+
+                    <span class="section-eyebrow">
+                        YOUR ACTIVITY
+                    </span>
+
+                    <h2>
+                        Waste Classification Overview
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div class="dashboard-stats">
+
+
+                <!-- TOTAL -->
+
+                <div class="dashboard-stat-card">
+
+                    <div class="stat-icon total-icon">
+                        🔍
+                    </div>
+
+                    <div class="stat-information">
+
+                        <span>
+                            Total Scans
+                        </span>
+
+                        <strong>
+                            {{ total }}
+                        </strong>
+
+                        <small>
+                            All classifications
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+                <!-- RECYCLABLE -->
+
+                <div class="dashboard-stat-card">
+
+                    <div class="stat-icon recyclable-icon">
+                        ♻
+                    </div>
+
+                    <div class="stat-information">
+
+                        <span>
+                            Recyclable
+                        </span>
+
+                        <strong>
+                            {{ recyclable }}
+                        </strong>
+
+                        <small>
+                            Can be recycled
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+                <!-- NON RECYCLABLE -->
+
+                <div class="dashboard-stat-card">
+
+                    <div class="stat-icon trash-icon">
+                        🗑
+                    </div>
+
+                    <div class="stat-information">
+
+                        <span>
+                            Non-Recyclable
+                        </span>
+
+                        <strong>
+                            {{ non_recyclable }}
+                        </strong>
+
+                        <small>
+                            General waste
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+                <!-- CATEGORIES -->
+
+                <div class="dashboard-stat-card">
+
+                    <div class="stat-icon category-icon">
+                        📦
+                    </div>
+
+                    <div class="stat-information">
+
+                        <span>
+                            Waste Categories
+                        </span>
+
+                        <strong>
+                            6
+                        </strong>
+
+                        <small>
+                            AI supported classes
+                        </small>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================= SCANNER ================= -->
+
+            <div class="dashboard-section-title scanner-title">
+
+                <div>
+
+                    <span class="section-eyebrow">
+                        AI CLASSIFICATION
+                    </span>
+
+                    <h2>
+                        Scan Your Waste
+                    </h2>
+
+                    <p>
+                        Use your camera or upload an image to classify
+                        your waste with artificial intelligence.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="scanner-cards">
+
+
+                <!-- CAMERA -->
+
+                <div class="scanner-card camera-scanner-card">
+
+                    <div class="scanner-card-header">
+
+                        <div class="scanner-card-icon">
+                            📷
+                        </div>
+
+                        <div>
+
+                            <h3>
+                                Live Camera
+                            </h3>
+
+                            <span>
+                                Real-time waste detection
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                    <div class="scanner-card-body">
+
+                        <div class="camera-preview-small">
+
+                            <div class="camera-preview-icon">
+                                📷
+                            </div>
+
+                            <span>
+                                Ready to scan
+                            </span>
+
+                        </div>
+
+                        <a
+                            href="{{ url_for('camera') }}"
+                            class="scanner-btn green">
+
+                            Open Camera →
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+
+                <!-- UPLOAD -->
+
+                <div class="scanner-card upload-scanner-card">
+
+                    <div class="scanner-card-header">
+
+                        <div class="scanner-card-icon upload-icon">
+                            📤
+                        </div>
+
+                        <div>
+
+                            <h3>
+                                Upload Waste Image
+                            </h3>
+
+                            <span>
+                                Upload an image for AI analysis
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                    <div class="scanner-card-body">
+
+                        <label
+                            for="dashboardUpload"
+                            class="upload-area">
+
+                            <div class="upload-big-icon">
+                                📁
+                            </div>
+
+                            <strong>
+                                Choose an image
+                            </strong>
+
+                            <span>
+                                JPG, JPEG or PNG
+                            </span>
+
+                        </label>
+
+                        <input
+                            type="file"
+                            id="dashboardUpload"
+                            accept="image/*"
+                            hidden
+                        >
+
+                        <div
+                            id="dashboardUploadStatus"
+                            class="upload-status">
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================= CATEGORIES ================= -->
+
+            <div class="dashboard-section-title">
+
+                <div>
+
+                    <span class="section-eyebrow">
+                        AI CATEGORIES
+                    </span>
+
+                    <h2>
+                        Waste Categories
+                    </h2>
+
+                    <p>
+                        SmartWaste AI can identify six major waste categories.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="waste-category-grid">
+
+
+                <div class="waste-category-card">
+
+                    <div class="category-emoji cardboard">
+                        📦
+                    </div>
+
+                    <div>
+                        <h3>Cardboard</h3>
+                        <span>
+                            {{ waste_counts.get('cardboard', 0) }} scans
+                        </span>
+                    </div>
+
+                </div>
+
+
+                <div class="waste-category-card">
+
+                    <div class="category-emoji glass">
+                        🫙
+                    </div>
+
+                    <div>
+                        <h3>Glass</h3>
+                        <span>
+                            {{ waste_counts.get('glass', 0) }} scans
+                        </span>
+                    </div>
+
+                </div>
+
+
+                <div class="waste-category-card">
+
+                    <div class="category-emoji metal">
+                        🥫
+                    </div>
+
+                    <div>
+                        <h3>Metal</h3>
+                        <span>
+                            {{ waste_counts.get('metal', 0) }} scans
+                        </span>
+                    </div>
+
+                </div>
+
+
+                <div class="waste-category-card">
+
+                    <div class="category-emoji paper">
+                        📄
+                    </div>
+
+                    <div>
+                        <h3>Paper</h3>
+                        <span>
+                            {{ waste_counts.get('paper', 0) }} scans
+                        </span>
+                    </div>
+
+                </div>
+
+
+                <div class="waste-category-card">
+
+                    <div class="category-emoji plastic">
+                        🧴
+                    </div>
+
+                    <div>
+                        <h3>Plastic</h3>
+                        <span>
+                            {{ waste_counts.get('plastic', 0) }} scans
+                        </span>
+                    </div>
+
+                </div>
+
+
+                <div class="waste-category-card">
+
+                    <div class="category-emoji trash">
+                        🗑️
+                    </div>
+
+                    <div>
+                        <h3>Trash</h3>
+                        <span>
+                            {{ waste_counts.get('trash', 0) }} scans
+                        </span>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================= RECENT HISTORY ================= -->
+
+            <div class="dashboard-section-title recent-title">
+
+                <div>
+
+                    <span class="section-eyebrow">
+                        RECENT ACTIVITY
+                    </span>
+
+                    <h2>
+                        Recent Classifications
+                    </h2>
+
+                </div>
+
+                <a
+                    href="{{ url_for('history') }}"
+                    class="view-all-link">
+
+                    View All →
+
+                </a>
+
+            </div>
+
+
+            <div class="recent-card">
+
+                {% if recent %}
+
+                <div class="recent-list">
+
+                    {% for row in recent %}
+
+                    <div class="recent-item">
+
+                        <div class="recent-waste-icon">
+
+                            {% if row['display_type'] == 'cardboard' %}
+                                📦
+                            {% elif row['display_type'] == 'glass' %}
+                                🫙
+                            {% elif row['display_type'] == 'metal' %}
+                                🥫
+                            {% elif row['display_type'] == 'paper' %}
+                                📄
+                            {% elif row['display_type'] == 'plastic' %}
+                                🧴
+                            {% else %}
+                                🗑️
+                            {% endif %}
+
+                        </div>
+
+
+                        <div class="recent-info">
+
+                            <strong>
+                                {{ row['display_type']|capitalize }}
+                            </strong>
+
+                            <span>
+                                {{ row['created_at'] }}
+                            </span>
+
+                        </div>
+
+
+                        <div class="recent-confidence">
+
+                            <span>
+                                Confidence
+                            </span>
+
+                            <strong>
+                                {{ "%.1f"|format(row['confidence'] or 0) }}%
+                            </strong>
+
+                        </div>
+
+
+                        <div>
+
+                            {% if row['recyclable'] %}
+
+                            <span class="recent-badge recyclable">
+                                ♻ Recyclable
+                            </span>
+
+                            {% else %}
+
+                            <span class="recent-badge non-recyclable">
+                                🗑 General Waste
+                            </span>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+
+                {% else %}
+
+                <div class="recent-empty">
+
+                    <div>
+                        🕘
+                    </div>
+
+                    <h3>
+                        No scans yet
+                    </h3>
+
+                    <p>
+                        Start scanning waste to see your
+                        classification history here.
+                    </p>
+
+                    <a
+                        href="{{ url_for('camera') }}"
+                        class="scanner-btn green">
+
+                        Start First Scan
+
+                    </a>
+
+                </div>
+
+                {% endif %}
+
+            </div>
+
+
+            <!-- ================= BOTTOM CTA ================= -->
+
+            <div class="dashboard-cta">
+
+                <div>
+
+                    <span>
+                        🌱 MAKE A DIFFERENCE
+                    </span>
+
+                    <h2>
+                        Every correctly sorted item helps our planet.
+                    </h2>
+
+                    <p>
+                        Use SmartWaste AI to make smarter waste
+                        disposal decisions every day.
+                    </p>
+
+                </div>
+
+                <a
+                    href="{{ url_for('recycling_centers') }}"
+                    class="cta-button">
+
+                    📍 Find Recycling Centers
+
+                </a>
+
+            </div>
+
+
+        </section>
+
+
+        <!-- FOOTER -->
+
+        <footer class="dashboard-footer">
+
+            <strong>
+                ♻ SmartWaste AI
+            </strong>
+
+            <span>
+                AI-Based Smart Waste Management System
+            </span>
+
+            <span>
+                © 2026 SmartWaste AI
+            </span>
+
+        </footer>
+
+    </main>
+
+</div>
+
+
+<!-- ================= UPLOAD SCRIPT ================= -->
+
+<script>
+
+const dashboardUpload =
+    document.getElementById(
+        "dashboardUpload"
+    );
+
+const dashboardUploadStatus =
+    document.getElementById(
+        "dashboardUploadStatus"
+    );
+
+
+if (dashboardUpload) {
+
+    dashboardUpload.addEventListener(
+        "change",
+        async function () {
+
+            const file =
+                this.files[0];
+
+            if (!file) {
+                return;
+            }
+
+
+            dashboardUploadStatus.innerHTML =
+                "⏳ Uploading and scanning...";
+
+
+            const formData =
+                new FormData();
+
+            formData.append(
+                "file",
+                file
+            );
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        "{{ url_for('predict') }}",
+                        {
+                            method: "POST",
+                            body: formData
+                        }
+                    );
+
+
+                const contentType =
+                    response.headers.get(
+                        "content-type"
+                    ) || "";
+
+
+                if (!contentType.includes(
+                    "application/json"
+                )) {
+
+                    const text =
+                        await response.text();
+
+                    console.error(
+                        text
+                    );
+
+                    throw new Error(
+                        "Server did not return JSON."
+                    );
+                }
+
+
+                const result =
+                    await response.json();
+
+
+                if (!result.success) {
+
+                    throw new Error(
+                        result.error ||
+                        "Classification failed."
+                    );
+                }
+
+
+                dashboardUploadStatus.innerHTML =
+                    `
+                    <div class="upload-success">
+                        <strong>
+                            🤖 ${result.prediction.toUpperCase()}
+                        </strong>
+
+                        <span>
+                            Confidence:
+                            ${result.confidence}%
+                        </span>
+                    </div>
+                    `;
+
+
+                setTimeout(
+                    function () {
+
+                        window.location.href =
+                            "{{ url_for('camera') }}";
+
+                    },
+                    1800
+                );
+
+
+            } catch (error) {
+
+                console.error(
+                    error
+                );
+
+
+                dashboardUploadStatus.innerHTML =
+                    `
+                    <div class="upload-error">
+                        ❌ ${error.message}
+                    </div>
+                    `;
+
+            }
+
+        }
+    );
+
+}
+
+</script>
+
+{% endblock %}

@@ -1,0 +1,606 @@
+{% extends "base.html" %}
+
+{% block title %}
+Analytics - SmartWaste AI
+{% endblock %}
+
+
+{% block content %}
+
+<div class="app-layout">
+
+    <!-- =====================================================
+         SIDEBAR
+         ===================================================== -->
+
+    <aside class="sidebar">
+
+        <div class="sidebar-logo">
+            ♻ SmartWaste AI
+        </div>
+
+
+        <nav class="sidebar-nav">
+
+            <a href="{{ url_for('dashboard') }}">
+                🏠 Dashboard
+            </a>
+
+            <a href="{{ url_for('camera') }}">
+                📷 AI Scanner
+            </a>
+
+            <a href="{{ url_for('history') }}">
+                🕘 History
+            </a>
+
+            <a href="{{ url_for('analytics') }}"
+               class="active">
+                📊 Analytics
+            </a>
+
+            <a href="{{ url_for('recycling_centers') }}">
+                ♻ Recycling Centers
+            </a>
+
+        </nav>
+
+
+        <div class="sidebar-bottom">
+
+            <a href="{{ url_for('logout') }}"
+               class="btn danger full">
+                Logout
+            </a>
+
+        </div>
+
+    </aside>
+
+
+    <!-- =====================================================
+         MAIN
+         ===================================================== -->
+
+    <main class="main-content">
+
+
+        <!-- TOP BAR -->
+
+        <header class="topbar">
+
+            <div>
+                <h2>Waste Analytics</h2>
+            </div>
+
+
+            <div class="user-info">
+
+                <div class="user-avatar">
+                    {{ session.get('name', 'U')[0]|upper }}
+                </div>
+
+                <div>
+                    <strong>
+                        {{ session.get('name', 'User') }}
+                    </strong>
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- PAGE CONTENT -->
+
+        <section class="page-content">
+
+
+            <div class="page-title">
+
+                <h1>
+                    Waste Analytics
+                </h1>
+
+                <p>
+                    Visual analysis of your waste classifications.
+                </p>
+
+            </div>
+
+
+            <!-- =================================================
+                 SUMMARY
+                 ================================================= -->
+
+            <div class="stats-grid">
+
+                <div class="stat-card">
+
+                    <div class="stat-number">
+                        {{ total }}
+                    </div>
+
+                    <div class="stat-label">
+                        Total Scans
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-number">
+                        {{ recyclable }}
+                    </div>
+
+                    <div class="stat-label">
+                        Recyclable
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-number">
+                        {{ non_recyclable }}
+                    </div>
+
+                    <div class="stat-label">
+                        Non-Recyclable
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-number">
+
+                        {% if total > 0 %}
+
+                            {{ ((recyclable / total) * 100)|round(1) }}%
+
+                        {% else %}
+
+                            0%
+
+                        {% endif %}
+
+                    </div>
+
+                    <div class="stat-label">
+                        Recycling Rate
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 CATEGORY ANALYSIS
+                 ================================================= -->
+
+            <div class="analytics-grid">
+
+
+                <div class="analytics-card">
+
+                    <h2>
+                        Waste Category Distribution
+                    </h2>
+
+
+                    {% set max_count =
+                        [
+                            waste_counts.cardboard,
+                            waste_counts.glass,
+                            waste_counts.metal,
+                            waste_counts.paper,
+                            waste_counts.plastic,
+                            waste_counts.trash
+                        ] | max
+                    %}
+
+
+                    <!-- CARDboard -->
+
+                    <div class="analytics-bar">
+
+                        <div class="analytics-bar-header">
+
+                            <span>
+                                📦 Cardboard
+                            </span>
+
+                            <strong>
+                                {{ waste_counts.cardboard }}
+                            </strong>
+
+                        </div>
+
+
+                        <div class="analytics-track">
+
+                            {% if max_count > 0 %}
+
+                                <div class="analytics-fill"
+                                     style="width: {{ (waste_counts.cardboard / max_count * 100)|round }}%;">
+                                </div>
+
+                            {% else %}
+
+                                <div class="analytics-fill"
+                                     style="width: 0%;">
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- GLASS -->
+
+                    <div class="analytics-bar">
+
+                        <div class="analytics-bar-header">
+
+                            <span>
+                                🫙 Glass
+                            </span>
+
+                            <strong>
+                                {{ waste_counts.glass }}
+                            </strong>
+
+                        </div>
+
+
+                        <div class="analytics-track">
+
+                            {% if max_count > 0 %}
+
+                                <div class="analytics-fill"
+                                     style="width: {{ (waste_counts.glass / max_count * 100)|round }}%;">
+                                </div>
+
+                            {% else %}
+
+                                <div class="analytics-fill"
+                                     style="width: 0%;">
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- METAL -->
+
+                    <div class="analytics-bar">
+
+                        <div class="analytics-bar-header">
+
+                            <span>
+                                🥫 Metal
+                            </span>
+
+                            <strong>
+                                {{ waste_counts.metal }}
+                            </strong>
+
+                        </div>
+
+
+                        <div class="analytics-track">
+
+                            {% if max_count > 0 %}
+
+                                <div class="analytics-fill"
+                                     style="width: {{ (waste_counts.metal / max_count * 100)|round }}%;">
+                                </div>
+
+                            {% else %}
+
+                                <div class="analytics-fill"
+                                     style="width: 0%;">
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- PAPER -->
+
+                    <div class="analytics-bar">
+
+                        <div class="analytics-bar-header">
+
+                            <span>
+                                📄 Paper
+                            </span>
+
+                            <strong>
+                                {{ waste_counts.paper }}
+                            </strong>
+
+                        </div>
+
+
+                        <div class="analytics-track">
+
+                            {% if max_count > 0 %}
+
+                                <div class="analytics-fill"
+                                     style="width: {{ (waste_counts.paper / max_count * 100)|round }}%;">
+                                </div>
+
+                            {% else %}
+
+                                <div class="analytics-fill"
+                                     style="width: 0%;">
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- PLASTIC -->
+
+                    <div class="analytics-bar">
+
+                        <div class="analytics-bar-header">
+
+                            <span>
+                                🧴 Plastic
+                            </span>
+
+                            <strong>
+                                {{ waste_counts.plastic }}
+                            </strong>
+
+                        </div>
+
+
+                        <div class="analytics-track">
+
+                            {% if max_count > 0 %}
+
+                                <div class="analytics-fill"
+                                     style="width: {{ (waste_counts.plastic / max_count * 100)|round }}%;">
+                                </div>
+
+                            {% else %}
+
+                                <div class="analytics-fill"
+                                     style="width: 0%;">
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- TRASH -->
+
+                    <div class="analytics-bar">
+
+                        <div class="analytics-bar-header">
+
+                            <span>
+                                🗑 Trash
+                            </span>
+
+                            <strong>
+                                {{ waste_counts.trash }}
+                            </strong>
+
+                        </div>
+
+
+                        <div class="analytics-track">
+
+                            {% if max_count > 0 %}
+
+                                <div class="analytics-fill"
+                                     style="width: {{ (waste_counts.trash / max_count * 100)|round }}%;">
+                                </div>
+
+                            {% else %}
+
+                                <div class="analytics-fill"
+                                     style="width: 0%;">
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     CATEGORY CARDS
+                     ================================================= -->
+
+                <div class="analytics-card">
+
+                    <h2>
+                        Classification Summary
+                    </h2>
+
+
+                    <div class="category-grid"
+                         style="grid-template-columns: repeat(2, 1fr);">
+
+
+                        <div class="category-card">
+
+                            <div class="category-icon">
+                                📦
+                            </div>
+
+                            <h3>
+                                Cardboard
+                            </h3>
+
+                            <div class="count">
+                                {{ waste_counts.cardboard }}
+                            </div>
+
+                        </div>
+
+
+                        <div class="category-card">
+
+                            <div class="category-icon">
+                                🫙
+                            </div>
+
+                            <h3>
+                                Glass
+                            </h3>
+
+                            <div class="count">
+                                {{ waste_counts.glass }}
+                            </div>
+
+                        </div>
+
+
+                        <div class="category-card">
+
+                            <div class="category-icon">
+                                🥫
+                            </div>
+
+                            <h3>
+                                Metal
+                            </h3>
+
+                            <div class="count">
+                                {{ waste_counts.metal }}
+                            </div>
+
+                        </div>
+
+
+                        <div class="category-card">
+
+                            <div class="category-icon">
+                                📄
+                            </div>
+
+                            <h3>
+                                Paper
+                            </h3>
+
+                            <div class="count">
+                                {{ waste_counts.paper }}
+                            </div>
+
+                        </div>
+
+
+                        <div class="category-card">
+
+                            <div class="category-icon">
+                                🧴
+                            </div>
+
+                            <h3>
+                                Plastic
+                            </h3>
+
+                            <div class="count">
+                                {{ waste_counts.plastic }}
+                            </div>
+
+                        </div>
+
+
+                        <div class="category-card">
+
+                            <div class="category-icon">
+                                🗑
+                            </div>
+
+                            <h3>
+                                Trash
+                            </h3>
+
+                            <div class="count">
+                                {{ waste_counts.trash }}
+                            </div>
+
+                        </div>
+
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 NO DATA MESSAGE
+                 ================================================= -->
+
+            {% if total == 0 %}
+
+                <div class="card"
+                     style="margin-top: 25px;">
+
+                    <div class="empty-state">
+
+                        <div class="empty-icon">
+                            📊
+                        </div>
+
+                        <h2>
+                            No analytics data yet
+                        </h2>
+
+                        <p>
+                            Scan some waste items first to see
+                            your analytics.
+                        </p>
+
+                        <br>
+
+                        <a href="{{ url_for('camera') }}"
+                           class="btn primary">
+                            Start Scanning
+                        </a>
+
+                    </div>
+
+                </div>
+
+            {% endif %}
+
+
+        </section>
+
+    </main>
+
+</div>
+
+{% endblock %}

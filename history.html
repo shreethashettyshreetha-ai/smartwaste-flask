@@ -1,0 +1,478 @@
+{% extends "base.html" %}
+
+{% block title %}
+Classification History - SmartWaste AI
+{% endblock %}
+
+{% block content %}
+
+<div class="app-layout">
+
+    <!-- ================= SIDEBAR ================= -->
+
+    <aside class="sidebar">
+
+        <div class="sidebar-logo">
+            ♻ SmartWaste AI
+        </div>
+
+        <nav class="sidebar-nav">
+
+            <a href="{{ url_for('dashboard') }}">
+                🏠 Dashboard
+            </a>
+
+            <a href="{{ url_for('camera') }}">
+                📷 AI Scanner
+            </a>
+
+            <a class="active"
+               href="{{ url_for('history') }}">
+                🕘 History
+            </a>
+
+            <a href="{{ url_for('analytics') }}">
+                📊 Analytics
+            </a>
+
+            <a href="{{ url_for('recycling_centers') }}">
+                📍 Recycling Centers
+            </a>
+
+        </nav>
+
+        <div class="sidebar-bottom">
+
+            <a href="{{ url_for('logout') }}"
+               class="btn danger full">
+                🚪 Logout
+            </a>
+
+        </div>
+
+    </aside>
+
+
+    <!-- ================= MAIN CONTENT ================= -->
+
+    <main class="main-content">
+
+        <!-- TOP BAR -->
+
+        <header class="topbar">
+
+            <div>
+
+                <h2>
+                    Classification History
+                </h2>
+
+                <p>
+                    View your previous waste classifications
+                </p>
+
+            </div>
+
+            <div class="user-info">
+
+                <div class="user-avatar">
+
+                    {{ session.get('name', 'U')[0]|upper }}
+
+                </div>
+
+                <span>
+                    Welcome,
+                    <strong>
+                        {{ session.get('name', 'User') }}
+                    </strong>
+                </span>
+
+            </div>
+
+        </header>
+
+
+        <!-- ================= PAGE CONTENT ================= -->
+
+        <section class="page-content">
+
+
+            <!-- PAGE HEADER -->
+
+            <div class="page-title">
+
+                <span class="eyebrow">
+                    🕘 SCAN HISTORY
+                </span>
+
+                <h1>
+                    Your Waste Classification History
+                </h1>
+
+                <p>
+                    All waste items scanned using SmartWaste AI
+                    are displayed here.
+                </p>
+
+            </div>
+
+
+            <!-- ================= HISTORY CARD ================= -->
+
+            <div class="card history-card">
+
+                <div class="history-header">
+
+                    <div>
+
+                        <h2>
+                            📋 Classification Records
+                        </h2>
+
+                        <p class="muted">
+                            Your latest AI waste scanning results.
+                        </p>
+
+                    </div>
+
+                    <a href="{{ url_for('camera') }}"
+                       class="btn primary">
+
+                        📷 Scan New Waste
+
+                    </a>
+
+                </div>
+
+
+                {% if history %}
+
+                <div class="history-table-wrapper">
+
+                    <table class="history-table">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    #
+                                </th>
+
+                                <th>
+                                    Waste Type
+                                </th>
+
+                                <th>
+                                    Confidence
+                                </th>
+
+                                <th>
+                                    Classification
+                                </th>
+
+                                <th>
+                                    Recommendation
+                                </th>
+
+                                <th>
+                                    Date
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                        {% for row in history %}
+
+                            <tr>
+
+                                <!-- NUMBER -->
+
+                                <td>
+
+                                    <div class="history-number">
+
+                                        {{ loop.index }}
+
+                                    </div>
+
+                                </td>
+
+
+                                <!-- WASTE TYPE -->
+
+                                <td>
+
+                                    <div class="waste-name">
+
+                                        {% if row['display_type'] == 'cardboard' %}
+                                            📦
+                                        {% elif row['display_type'] == 'glass' %}
+                                            🫙
+                                        {% elif row['display_type'] == 'metal' %}
+                                            🥫
+                                        {% elif row['display_type'] == 'paper' %}
+                                            📄
+                                        {% elif row['display_type'] == 'plastic' %}
+                                            🧴
+                                        {% else %}
+                                            🗑️
+                                        {% endif %}
+
+                                        <strong>
+
+                                            {{ row['display_type']|capitalize }}
+
+                                        </strong>
+
+                                    </div>
+
+                                </td>
+
+
+                                <!-- CONFIDENCE -->
+
+                                <td>
+
+                                    <div class="confidence-cell">
+
+                                        <strong>
+
+                                            {{ "%.2f"|format(
+                                                row['confidence'] or 0
+                                            ) }}%
+
+                                        </strong>
+
+                                        <div class="mini-confidence">
+
+                                            <div
+                                                class="mini-confidence-fill"
+                                                style="width:{{ row['confidence'] or 0 }}%"
+                                            >
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                </td>
+
+
+                                <!-- RECYCLABLE -->
+
+                                <td>
+
+                                    {% if row['recyclable'] %}
+
+                                        <span class="badge recyclable">
+
+                                            ♻ Recyclable
+
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="badge non-recyclable">
+
+                                            🗑 Non-Recyclable
+
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
+
+                                <!-- RECOMMENDATION -->
+
+                                <td>
+
+                                    <div class="history-recommendation">
+
+                                        ♻
+
+                                        <span>
+
+                                            {{ row['recommendation'] }}
+
+                                        </span>
+
+                                    </div>
+
+                                </td>
+
+
+                                <!-- DATE -->
+
+                                <td>
+
+                                    <div class="history-date">
+
+                                        <strong>
+
+                                            {{ row['created_at'].split(' ')[0] }}
+
+                                        </strong>
+
+                                        <small>
+
+                                            {{ row['created_at'].split(' ')[1] }}
+
+                                        </small>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+                        {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+
+                {% else %}
+
+                <!-- EMPTY HISTORY -->
+
+                <div class="history-empty">
+
+                    <div class="history-empty-icon">
+                        🕘
+                    </div>
+
+                    <h2>
+                        No Classification History
+                    </h2>
+
+                    <p>
+                        You haven't scanned any waste items yet.
+                        Start your first AI classification now.
+                    </p>
+
+                    <a
+                        href="{{ url_for('camera') }}"
+                        class="btn primary">
+
+                        📷 Start AI Scanner
+
+                    </a>
+
+                </div>
+
+                {% endif %}
+
+            </div>
+
+
+            <!-- ================= BOTTOM SECTION ================= -->
+
+            <div class="history-bottom-grid">
+
+
+                <!-- SCAN MORE -->
+
+                <div class="card scan-more-card">
+
+                    <div class="scan-more-icon">
+                        🤖
+                    </div>
+
+                    <div>
+
+                        <h2>
+                            Scan More Waste
+                        </h2>
+
+                        <p class="muted">
+
+                            Use our AI scanner to classify
+                            another waste item.
+
+                        </p>
+
+                        <a
+                            href="{{ url_for('camera') }}"
+                            class="btn primary">
+
+                            📷 Open AI Scanner
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ANALYTICS -->
+
+                <div class="card analytics-link-card">
+
+                    <div class="analytics-link-icon">
+                        📊
+                    </div>
+
+                    <div>
+
+                        <h2>
+                            View Analytics
+                        </h2>
+
+                        <p class="muted">
+
+                            See your waste classification
+                            statistics and category distribution.
+
+                        </p>
+
+                        <a
+                            href="{{ url_for('analytics') }}"
+                            class="btn secondary">
+
+                            📊 View Analytics
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+        </section>
+
+
+        <!-- ================= FOOTER ================= -->
+
+        <footer class="site-footer">
+
+            <strong>
+                ♻ SmartWaste AI
+            </strong>
+
+            <span>
+                AI-Based Smart Waste Management System
+            </span>
+
+            <span>
+                © 2026 SmartWaste AI
+            </span>
+
+        </footer>
+
+    </main>
+
+</div>
+
+{% endblock %}

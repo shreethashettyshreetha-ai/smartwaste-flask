@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+
+{% block title %}
+SmartWaste AI
+{% endblock %}
+
+
+{% block content %}
+
+<div class="landing">
+
+    <div class="landing-card">
+
+        <!-- LOGO -->
+
+        <div class="logo">
+
+            ♻ SmartWaste AI
+
+        </div>
+
+
+        <!-- MAIN TITLE -->
+
+        <h1>
+
+            Intelligent Waste Sorting
+            for a Sustainable Planet
+
+        </h1>
+
+
+        <!-- DESCRIPTION -->
+
+        <p>
+
+            SmartWaste AI uses deep learning and
+            computer vision to identify different
+            types of waste and provide suitable
+            recycling and disposal recommendations.
+
+        </p>
+
+
+        <!-- BUTTONS -->
+
+        <div class="button-row">
+
+            <a href="{{ url_for('login') }}"
+               class="btn primary">
+
+                Login
+
+            </a>
+
+
+            <a href="{{ url_for('register') }}"
+               class="btn secondary">
+
+                Create Account
+
+            </a>
+
+        </div>
+
+
+        <!-- FEATURES -->
+
+        <div class="landing-features">
+
+            <div>
+
+                <span>📷</span>
+
+                <strong>
+                    Live Camera
+                </strong>
+
+                <p>
+                    Scan waste using your camera.
+                </p>
+
+            </div>
+
+
+            <div>
+
+                <span>🤖</span>
+
+                <strong>
+                    AI Classification
+                </strong>
+
+                <p>
+                    CNN identifies the waste category.
+                </p>
+
+            </div>
+
+
+            <div>
+
+                <span>♻</span>
+
+                <strong>
+                    Recycling Guidance
+                </strong>
+
+                <p>
+                    Get recommendations for disposal.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

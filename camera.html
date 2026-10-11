@@ -1,0 +1,1290 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>SmartWaste AI - Waste Classification</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f7f5;
+            color: #222;
+        }
+
+        /* =========================
+           NAVBAR
+        ========================= */
+
+        .navbar {
+            background: #198754;
+            color: white;
+            padding: 18px 40px;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-size: 15px;
+        }
+
+        .nav-links a:hover {
+            text-decoration: underline;
+        }
+
+        /* =========================
+           MAIN
+        ========================= */
+
+        .container {
+            width: 90%;
+            max-width: 1100px;
+            margin: 40px auto;
+        }
+
+        .title {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .title h1 {
+            color: #198754;
+            margin-bottom: 10px;
+        }
+
+        .title p {
+            color: #666;
+        }
+
+        /* =========================
+           MAIN GRID
+        ========================= */
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        }
+
+        .card h2 {
+            margin-bottom: 20px;
+            color: #198754;
+        }
+
+        /* =========================
+           CAMERA
+        ========================= */
+
+        .camera-box {
+            width: 100%;
+            background: #111;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        video {
+            width: 100%;
+            display: block;
+        }
+
+        canvas {
+            display: none;
+        }
+
+        /* =========================
+           BUTTONS
+        ========================= */
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+
+            cursor: pointer;
+
+            font-size: 15px;
+            font-weight: bold;
+        }
+
+        .btn-green {
+            background: #198754;
+            color: white;
+        }
+
+        .btn-green:hover {
+            background: #146c43;
+        }
+
+        .btn-blue {
+            background: #0d6efd;
+            color: white;
+        }
+
+        .btn-blue:hover {
+            background: #0b5ed7;
+        }
+
+        .btn-red {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-red:hover {
+            background: #bb2d3b;
+        }
+
+        /* =========================
+           UPLOAD
+        ========================= */
+
+        .upload-box {
+            border: 2px dashed #198754;
+            border-radius: 12px;
+
+            padding: 30px;
+            text-align: center;
+
+            margin-bottom: 20px;
+        }
+
+        .upload-box input {
+            margin-top: 15px;
+        }
+
+        /* =========================
+           PREVIEW
+        ========================= */
+
+        .preview {
+            width: 100%;
+            max-height: 300px;
+
+            object-fit: contain;
+
+            border-radius: 10px;
+
+            margin-top: 20px;
+
+            display: none;
+        }
+
+        /* =========================
+           RESULT
+        ========================= */
+
+        #result {
+            margin-top: 30px;
+            display: none;
+        }
+
+        .result-card {
+            background: white;
+
+            border-radius: 15px;
+
+            padding: 30px;
+
+            box-shadow: 0 5px 20px rgba(0,0,0,0.10);
+
+            border-left: 6px solid #198754;
+        }
+
+        .result-title {
+            color: #198754;
+
+            font-size: 24px;
+
+            margin-bottom: 20px;
+        }
+
+        .prediction {
+            font-size: 32px;
+
+            font-weight: bold;
+
+            color: #198754;
+
+            margin: 15px 0;
+        }
+
+        .result-row {
+            padding: 12px 0;
+
+            border-bottom: 1px solid #eee;
+
+            font-size: 17px;
+        }
+
+        .result-row:last-child {
+            border-bottom: none;
+        }
+
+        .label {
+            font-weight: bold;
+        }
+
+        .recommendation {
+            margin-top: 15px;
+
+            padding: 15px;
+
+            background: #f1f8f4;
+
+            border-radius: 10px;
+
+            line-height: 1.6;
+        }
+
+        .warning {
+            margin-top: 15px;
+
+            padding: 12px;
+
+            background: #fff3cd;
+
+            color: #856404;
+
+            border-radius: 8px;
+
+            display: none;
+        }
+
+        /* =========================
+           LOADING
+        ========================= */
+
+        .loading {
+            display: none;
+
+            text-align: center;
+
+            padding: 20px;
+
+            color: #198754;
+
+            font-weight: bold;
+        }
+
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @media(max-width: 800px) {
+
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .navbar {
+                padding: 15px 20px;
+            }
+
+            .nav-links {
+                gap: 10px;
+            }
+
+            .container {
+                width: 94%;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+     NAVBAR
+===================================================== -->
+
+<div class="navbar">
+
+    <div class="logo">
+        ♻ SmartWaste AI
+    </div>
+
+    <div class="nav-links">
+
+        <a href="/dashboard">
+            Dashboard
+        </a>
+
+        <a href="/history">
+            History
+        </a>
+
+        <a href="/analytics">
+            Analytics
+        </a>
+
+        <a href="/logout">
+            Logout
+        </a>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     MAIN CONTAINER
+===================================================== -->
+
+<div class="container">
+
+
+    <div class="title">
+
+        <h1>
+            Waste Classification
+        </h1>
+
+        <p>
+            Upload an image or use your camera to identify the waste.
+        </p>
+
+    </div>
+
+
+
+    <!-- =================================================
+         CAMERA + UPLOAD
+    ================================================== -->
+
+    <div class="main-grid">
+
+
+        <!-- CAMERA -->
+
+        <div class="card">
+
+            <h2>
+                📷 Camera
+            </h2>
+
+
+            <div class="camera-box">
+
+                <video
+                    id="video"
+                    autoplay
+                    playsinline>
+                </video>
+
+            </div>
+
+
+            <canvas id="canvas"></canvas>
+
+
+            <div class="button-group">
+
+                <button
+                    class="btn-green"
+                    onclick="startCamera()">
+
+                    Start Camera
+
+                </button>
+
+
+                <button
+                    class="btn-blue"
+                    onclick="captureImage()">
+
+                    Capture
+
+                </button>
+
+
+                <button
+                    class="btn-red"
+                    onclick="stopCamera()">
+
+                    Stop Camera
+
+                </button>
+
+            </div>
+
+
+            <img
+                id="cameraPreview"
+                class="preview">
+
+        </div>
+
+
+
+        <!-- UPLOAD -->
+
+        <div class="card">
+
+            <h2>
+                📁 Upload Image
+            </h2>
+
+
+            <div class="upload-box">
+
+                <p>
+                    Select a waste image
+                </p>
+
+
+                <input
+                    type="file"
+                    id="imageInput"
+                    accept="image/*"
+                    onchange="previewUploadedImage()">
+
+            </div>
+
+
+            <img
+                id="uploadPreview"
+                class="preview">
+
+
+            <div class="button-group">
+
+                <button
+                    class="btn-green"
+                    onclick="uploadImage()">
+
+                    🔍 Classify Image
+
+                </button>
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+
+    <!-- =================================================
+         LOADING
+    ================================================== -->
+
+    <div
+        id="loading"
+        class="loading">
+
+        ⏳ AI is analyzing the image...
+        Please wait.
+
+    </div>
+
+
+
+    <!-- =================================================
+         RESULT
+    ================================================== -->
+
+    <div id="result">
+
+
+        <div class="result-card">
+
+
+            <div class="result-title">
+
+                🤖 AI Classification Result
+
+            </div>
+
+
+            <!-- ONLY ONE PREDICTION -->
+
+            <div
+                id="prediction"
+                class="prediction">
+
+            </div>
+
+
+            <!-- CONFIDENCE -->
+
+            <div class="result-row">
+
+                <span class="label">
+                    Confidence:
+                </span>
+
+                <span id="confidence">
+                </span>
+
+            </div>
+
+
+            <!-- RECYCLABLE -->
+
+            <div class="result-row">
+
+                <span class="label">
+                    Waste Status:
+                </span>
+
+                <span id="category">
+                </span>
+
+            </div>
+
+
+            <!-- RECOMMENDATION -->
+
+            <div class="recommendation">
+
+                <span class="label">
+                    Recommendation:
+                </span>
+
+                <p id="recommendation">
+                </p>
+
+            </div>
+
+
+            <!-- WARNING -->
+
+            <div
+                id="warning"
+                class="warning">
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+</div>
+
+
+
+<!-- =====================================================
+     JAVASCRIPT
+===================================================== -->
+
+<script>
+
+
+/* =====================================================
+   CAMERA VARIABLES
+===================================================== */
+
+let video =
+    document.getElementById("video");
+
+let canvas =
+    document.getElementById("canvas");
+
+let stream = null;
+
+
+
+/* =====================================================
+   START CAMERA
+===================================================== */
+
+async function startCamera() {
+
+    try {
+
+        stream =
+            await navigator.mediaDevices.getUserMedia({
+
+                video: true,
+
+                audio: false
+
+            });
+
+
+        video.srcObject = stream;
+
+    }
+
+    catch(error) {
+
+        console.error(error);
+
+        alert(
+            "Camera access denied or unavailable."
+        );
+
+    }
+
+}
+
+
+
+/* =====================================================
+   STOP CAMERA
+===================================================== */
+
+function stopCamera() {
+
+    if(stream) {
+
+        stream.getTracks().forEach(
+            track => track.stop()
+        );
+
+        stream = null;
+
+        video.srcObject = null;
+
+    }
+
+}
+
+
+
+/* =====================================================
+   CAPTURE CAMERA IMAGE
+===================================================== */
+
+function captureImage() {
+
+
+    if(!stream) {
+
+        alert(
+            "Please start the camera first."
+        );
+
+        return;
+
+    }
+
+
+    canvas.width =
+        video.videoWidth;
+
+    canvas.height =
+        video.videoHeight;
+
+
+    const context =
+        canvas.getContext("2d");
+
+
+    context.drawImage(
+
+        video,
+
+        0,
+
+        0,
+
+        canvas.width,
+
+        canvas.height
+
+    );
+
+
+    const imageData =
+        canvas.toDataURL("image/jpeg");
+
+
+    document.getElementById(
+        "cameraPreview"
+    ).src = imageData;
+
+
+    document.getElementById(
+        "cameraPreview"
+    ).style.display = "block";
+
+
+    classifyCameraImage(
+        imageData
+    );
+
+}
+
+
+
+/* =====================================================
+   CLASSIFY CAMERA IMAGE
+===================================================== */
+
+async function classifyCameraImage(imageData) {
+
+
+    showLoading();
+
+
+    try {
+
+
+        const response =
+            await fetch(
+                "/predict",
+                {
+
+                    method: "POST",
+
+                    headers: {
+
+                        "Content-Type":
+                            "application/json"
+
+                    },
+
+                    body: JSON.stringify({
+
+                        image: imageData
+
+                    })
+
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        displayResult(data);
+
+
+    }
+
+    catch(error) {
+
+        console.error(error);
+
+        hideLoading();
+
+        showError(
+            "Unable to connect to the server."
+        );
+
+    }
+
+}
+
+
+
+/* =====================================================
+   PREVIEW UPLOADED IMAGE
+===================================================== */
+
+function previewUploadedImage() {
+
+
+    const input =
+        document.getElementById(
+            "imageInput"
+        );
+
+
+    if(
+        !input.files ||
+        input.files.length === 0
+    ) {
+
+        return;
+
+    }
+
+
+    const file =
+        input.files[0];
+
+
+    const reader =
+        new FileReader();
+
+
+    reader.onload =
+        function(event) {
+
+
+            const preview =
+                document.getElementById(
+                    "uploadPreview"
+                );
+
+
+            preview.src =
+                event.target.result;
+
+
+            preview.style.display =
+                "block";
+
+
+        };
+
+
+    reader.readAsDataURL(file);
+
+}
+
+
+
+/* =====================================================
+   UPLOAD IMAGE
+===================================================== */
+
+async function uploadImage() {
+
+
+    const input =
+        document.getElementById(
+            "imageInput"
+        );
+
+
+    if(
+        !input.files ||
+        input.files.length === 0
+    ) {
+
+        alert(
+            "Please select an image first."
+        );
+
+        return;
+
+    }
+
+
+    const file =
+        input.files[0];
+
+
+    const formData =
+        new FormData();
+
+
+    formData.append(
+        "file",
+        file
+    );
+
+
+    showLoading();
+
+
+    try {
+
+
+        const response =
+            await fetch(
+
+                "/predict",
+
+                {
+
+                    method: "POST",
+
+                    body: formData
+
+                }
+
+            );
+
+
+        const data =
+            await response.json();
+
+
+        displayResult(data);
+
+
+    }
+
+    catch(error) {
+
+
+        console.error(error);
+
+
+        hideLoading();
+
+
+        showError(
+            "Unable to connect to the server."
+        );
+
+
+    }
+
+}
+
+
+
+/* =====================================================
+   DISPLAY RESULT
+===================================================== */
+
+function displayResult(data) {
+
+
+    hideLoading();
+
+
+    const result =
+        document.getElementById(
+            "result"
+        );
+
+
+    const prediction =
+        document.getElementById(
+            "prediction"
+        );
+
+
+    const confidence =
+        document.getElementById(
+            "confidence"
+        );
+
+
+    const category =
+        document.getElementById(
+            "category"
+        );
+
+
+    const recommendation =
+        document.getElementById(
+            "recommendation"
+        );
+
+
+    const warning =
+        document.getElementById(
+            "warning"
+        );
+
+
+
+    /* ==========================================
+       ERROR
+    ========================================== */
+
+    if(!data.success) {
+
+
+        result.style.display =
+            "block";
+
+
+        prediction.innerText =
+            "Prediction Failed";
+
+
+        confidence.innerText =
+            "";
+
+
+        category.innerText =
+            "";
+
+
+        recommendation.innerText =
+            data.error ||
+            "Unable to classify image.";
+
+
+        warning.style.display =
+            "none";
+
+
+        return;
+
+    }
+
+
+
+    /* ==========================================
+       SHOW ONLY THE PREDICTED CLASS
+    ========================================== */
+
+    prediction.innerText =
+        formatWasteName(
+            data.prediction
+        );
+
+
+
+    /* ==========================================
+       CONFIDENCE
+    ========================================== */
+
+    confidence.innerText =
+        data.confidence + "%";
+
+
+
+    /* ==========================================
+       RECYCLABLE STATUS
+    ========================================== */
+
+    if(data.recyclable) {
+
+        category.innerText =
+            "Recyclable";
+
+    }
+
+    else {
+
+        category.innerText =
+            "Non-Recyclable";
+
+    }
+
+
+
+    /* ==========================================
+       RECOMMENDATION
+    ========================================== */
+
+    recommendation.innerText =
+        data.recommendation ||
+        "No recommendation available.";
+
+
+
+    /* ==========================================
+       WARNING
+    ========================================== */
+
+    if(data.warning) {
+
+        warning.innerText =
+            data.warning;
+
+        warning.style.display =
+            "block";
+
+    }
+
+    else {
+
+        warning.innerText =
+            "";
+
+        warning.style.display =
+            "none";
+
+    }
+
+
+
+    /* ==========================================
+       SHOW RESULT
+    ========================================== */
+
+    result.style.display =
+        "block";
+
+
+    /* ==========================================
+       SCROLL TO RESULT
+    ========================================== */
+
+    result.scrollIntoView({
+
+        behavior: "smooth",
+
+        block: "start"
+
+    });
+
+}
+
+
+
+/* =====================================================
+   FORMAT WASTE NAME
+===================================================== */
+
+function formatWasteName(name) {
+
+
+    if(!name) {
+
+        return "Unknown";
+
+    }
+
+
+    return name
+        .charAt(0)
+        .toUpperCase()
+        +
+        name.slice(1);
+
+}
+
+
+
+/* =====================================================
+   SHOW LOADING
+===================================================== */
+
+function showLoading() {
+
+
+    document.getElementById(
+        "loading"
+    ).style.display =
+        "block";
+
+
+    document.getElementById(
+        "result"
+    ).style.display =
+        "none";
+
+}
+
+
+
+/* =====================================================
+   HIDE LOADING
+===================================================== */
+
+function hideLoading() {
+
+
+    document.getElementById(
+        "loading"
+    ).style.display =
+        "none";
+
+}
+
+
+
+/* =====================================================
+   SHOW ERROR
+===================================================== */
+
+function showError(message) {
+
+
+    const result =
+        document.getElementById(
+            "result"
+        );
+
+
+    result.style.display =
+        "block";
+
+
+    document.getElementById(
+        "prediction"
+    ).innerText =
+        "Error";
+
+
+    document.getElementById(
+        "confidence"
+    ).innerText =
+        "";
+
+
+    document.getElementById(
+        "category"
+    ).innerText =
+        "";
+
+
+    document.getElementById(
+        "recommendation"
+    ).innerText =
+        message;
+
+
+    document.getElementById(
+        "warning"
+    ).style.display =
+        "none";
+
+}
+
+
+
+/* =====================================================
+   PAGE LOAD
+===================================================== */
+
+window.addEventListener(
+    "beforeunload",
+    function() {
+
+        stopCamera();
+
+    }
+);
+
+
+</script>
+
+
+</body>
+
+</html>
